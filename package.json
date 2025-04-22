@@ -1,6 +1,6 @@
 {
   "name": "@dashfuse/table-ai-filter",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "AI-powered natural language filtering for data tables",
   "repository": {
     "type": "git",
