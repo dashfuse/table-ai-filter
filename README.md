@@ -2,41 +2,50 @@
 
 > AI-powered natural language filtering for data tables
 
-[![NPM](https://img.shields.io/npm/v/table-ai-filter.svg)](https://www.npmjs.com/package/@dashfuse/table-ai-filter)
-[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/@dashfuse/table-ai-filter.svg)](https://www.npmjs.com/package/@dashfuse/table-ai-filter)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Overview
+## Hey there! 👋
 
-`table-ai-filter` brings natural language filtering capabilities to data tables. It allows users to filter table data using plain English queries like "show jeans and shirts over $50" instead of manually setting filters on individual columns.
+I'm excited to share my new project with you! `table-ai-filter` is something I've been working on to make filtering data tables more intuitive using natural language. You know how frustrating it can be clicking through multiple dropdowns and inputs just to filter a table? I thought, "what if we could just type what we want in plain English?"
 
-Currently supports [TanStack Table](https://tanstack.com/table/v8) with plans to support more table libraries in the future.
+This is very much a work in progress, but I wanted to get it out there and see if others find it useful too!
 
-👉 [Demo](coming soon)
+> ⚠️ **Early Development**: This package is in its early stages. Expect changes and improvements as we grow!
+
+## What It Does
+
+`table-ai-filter` lets users filter table data by typing natural language queries like "show jeans and shirts over $50" instead of fiddling with separate column filters.
+
+Right now, it works with [TanStack Table](https://tanstack.com/table/v8), but I'm planning to add support for more libraries as time goes on.
 
 ## Features
 
-- 🧠 **Natural Language Understanding**: Parse queries in plain English and map them to table columns
-- 🔌 **Plug-and-Play**: Works with existing table setups with minimal configuration
-- 💪 **Extensible**: Architecture supports multiple table libraries through adapters
-- 🌐 **Client & Server**: Works with both client-side and server-side filtering
-- 🔄 **Fallbacks**: Gracefully handles parsing failures with global search fallback
-- 🛠️ **Customizable**: Style and behavior customization options
+- 🔍 **Natural Language Filtering**: Users can type queries in plain English
+- 🧠 **Multi-LLM Support**: Works with OpenAI, Anthropic Claude, or custom providers
+- 🔌 **Easy Integration**: Simple setup with existing TanStack Table instances
+- 🛠️ **Customizable**: Style, behavior, and LLM provider options
+- 🔄 **Fallbacks**: Graceful error handling with global search fallback
+- 🧩 **Extensible**: Create custom LLM providers for your specific needs
 
-## Installation
+## Quick Demo
+
+TBD - I'm working on setting up a proper demo site. For now, check out the code examples below!
+
+## Getting Started
 
 ```bash
 # npm
-npm install table-ai-filter
+npm install @dashfuse/table-ai-filter
 
 # yarn
-yarn add table-ai-filter
+yarn add @dashfuse/table-ai-filter
 
 # pnpm
-pnpm add table-ai-filter
+pnpm add @dashfuse/table-ai-filter
 ```
 
-## Quick Start with TanStack Table
+## Basic Usage with TanStack Table
 
 ```jsx
 import React, { useState } from 'react';
@@ -45,8 +54,7 @@ import {
   getCoreRowModel, 
   getFilteredRowModel
 } from '@tanstack/react-table';
-import { AIFilter } from 'table-ai-filter/tanstack';
-import 'table-ai-filter/styles.css'; // Optional default styles
+import { AIFilter } from '@dashfuse/table-ai-filter/tanstack';
 
 function ProductsTable() {
   // Your existing TanStack Table setup
@@ -81,190 +89,124 @@ function ProductsTable() {
 }
 ```
 
-## How It Works
+## Using Different LLM Providers
 
-1. The `AIFilter` component renders an input field where users type natural language queries
-2. When a query is submitted, it's sent to an LLM (like OpenAI's GPT-3.5) with context about your table columns
-3. The LLM parses the query into structured filter conditions
-4. These conditions are applied to your table's filter state through a table-specific adapter
-5. The table updates to show the filtered results
-
-## Supported Table Libraries
-
-### Current
-- ✅ [TanStack Table](https://tanstack.com/table/v8) (formerly React Table)
-
-### Planned
-- ⏳ AG Grid
-- ⏳ Material UI Data Grid
-- ⏳ React Data Grid
-
-## Configuration
-
-### TanStack Table Integration
-
-#### Basic Props
-
-| Prop | Type | Description |
-|------|------|-------------|
-| `table` | `Table<any>` | TanStack Table instance |
-| `apiKey` | `string` | OpenAI API key |
-| `placeholder` | `string` | Placeholder text for the input |
-| `showExplanation` | `boolean` | Show explanation of parsed filters |
-| `buttonText` | `string` | Text for the filter button |
-
-### Advanced Usage
-
-#### Custom Parser
-
-If you want to use a different LLM or add domain-specific logic:
+One of the key features is support for different LLM providers. You can choose which provider to use:
 
 ```jsx
-import { AIFilter } from 'table-ai-filter/tanstack';
-import { ParseResult } from 'table-ai-filter';
-
-// Custom parser function
-const customParser = async (query, columnMetadata) => {
-  // Simple keyword matching example
-  if (query.toLowerCase().includes('only active')) {
-    return {
-      success: true,
-      filters: [
-        {
-          id: 'status',
-          operator: 'equals',
-          value: 'Active'
-        }
-      ],
-      explanation: 'Showing only active items.'
-    };
-  }
-  
-  // Call your own LLM API or service
-  // ...
-  
-  // Return in the expected format
-  return {
-    success: true,
-    filters: [
-      // Your parsed filters
-    ],
-    explanation: 'Custom explanation of filters.'
-  };
-};
-
-// Use the custom parser
-<AIFilter 
-  table={table} 
-  parseQuery={customParser}
-  // No need for apiKey when using custom parser
-/>
-```
-
-#### Styling
-
-The component can be styled using:
-
-1. **CSS Classes**: Override default classes or provide your own
-2. **CSS Variables**: Customize colors and sizes through CSS variables
-3. **CSS Modules**: Import the component in a CSS Modules environment
-
-```jsx
-// Custom classes example
-<AIFilter 
+// Using OpenAI (default)
+<AIFilter
   table={table}
-  className="my-filter"
-  classes={{
-    container: 'custom-container',
-    input: 'custom-input',
-    button: 'custom-button'
+  llmProvider="openai"
+  llmOptions={{
+    apiKey: process.env.REACT_APP_OPENAI_API_KEY,
+    model: "gpt-3.5-turbo"
+  }}
+/>
+
+// Using Anthropic Claude
+<AIFilter
+  table={table}
+  llmProvider="claude"
+  llmOptions={{
+    apiKey: process.env.REACT_APP_ANTHROPIC_API_KEY,
+    model: "claude-3-haiku-20240307"
   }}
 />
 ```
 
-## Using the Core Package
+## Creating a Custom LLM Provider
 
-For more custom integrations or if you're using a table library that doesn't have a dedicated adapter yet, you can use the core package directly:
+You can create your own provider for custom parsing logic or to integrate with other LLMs:
 
 ```jsx
-import { 
-  AIFilterComponent, 
-  useAIFilter, 
-  parseNaturalLanguage 
-} from 'table-ai-filter';
-import 'table-ai-filter/styles.css';
+import { LLMProviderInterface, LLMProviderRegistry } from '@dashfuse/table-ai-filter';
 
-// Create a custom adapter for your table library
-class MyTableAdapter {
-  constructor(tableInstance) {
-    this.table = tableInstance;
+// Create a custom provider
+class MyCustomProvider implements LLMProviderInterface {
+  constructor(options) {
+    // Initialize with options
   }
   
-  getColumnMetadata() {
-    // Return column metadata in the expected format
-    return [
-      { 
-        id: 'name', 
-        header: 'Name', 
-        filterType: 'text'
-      },
-      // ...other columns
-    ];
+  getName() {
+    return 'custom';
   }
   
-  // Implement other required adapter methods
-  // ...
+  isConfigured() {
+    return true;
+  }
+  
+  async parseQuery(query, columnMetadata, currentFilters) {
+    // Custom parsing logic here
+    // Return a ParseResult object
+    return {
+      success: true,
+      filters: [
+        { id: 'category', operator: 'in', value: ['Jeans'] }
+      ],
+      explanation: 'Filtered for jeans products'
+    };
+  }
 }
 
-function MyTableWithAIFilter() {
-  // Your table setup
-  const tableInstance = setupTable();
-  
-  // Create adapter
-  const adapter = new MyTableAdapter(tableInstance);
-  
-  return (
-    <div>
-      <AIFilterComponent
-        adapter={adapter}
-        apiKey={process.env.REACT_APP_OPENAI_API_KEY}
-      />
-      
-      {/* Your table component */}
-    </div>
-  );
-}
+// Register your provider
+LLMProviderRegistry.register('custom', options => new MyCustomProvider(options));
+
+// Use your custom provider
+<AIFilter
+  table={table}
+  llmProvider="custom"
+  llmOptions={{ /* custom options */ }}
+/>
 ```
 
-## Package Structure
+## What's Supported So Far
 
-The package is organized to support multiple table libraries:
+I'm just getting started, but here's what's working:
 
-```
-table-ai-filter               # Main package
-├── dist/                     # Built files
-├── src/
-│   ├── core/                 # Core functionality
-│   │   ├── types.ts          # Common interfaces
-│   │   ├── AIFilterParser.ts # LLM integration
-│   │   ├── useAIFilter.ts    # Base hook
-│   │   └── AIFilterComponent.tsx # Base component
-│   ├── adapters/             # Table-specific adapters
-│   │   ├── tanstack/         # TanStack Table adapter
-│   │   └── ...               # Future adapters
-│   ├── utils/                # Utilities
-│   └── index.ts              # Main entry point
-└── package.json              # Package config with exports
-```
+### Currently Supported
+- ✅ [TanStack Table](https://tanstack.com/table/v8) (formerly React Table)
+- ✅ OpenAI GPT models
+- ✅ Anthropic Claude models
+- ✅ Custom provider API
 
-## Examples
+### On My Roadmap
+- ⏳ AG Grid
+- ⏳ Material UI Data Grid
+- ⏳ React Data Grid
+- ⏳ Local LLM options (for those who want to avoid API costs)
+- ⏳ Better handling of date filters
+- ⏳ Improved customization options
 
-More examples in the [documentation](https://example.com/docs) (coming soon).
+I'm building this in my spare time, so progress might be a bit slow - but I'm committed to making this a genuinely useful tool!
 
-## Contributing
+## Need Help or Have Ideas?
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+> 💬 **Need implementation help?** Feel free to reach out directly at [aa@dashfuse.co](mailto:aa@dashfuse.co) - I'm happy to help you get set up!
+
+I'd love to hear your thoughts, feedback, or feature requests! This is very much a community project, and I could really use your help:
+
+- **Found a bug?** Please open an issue!
+- **Have an idea for improvement?** Let me know!
+- **Want to contribute code?** PRs are very welcome - no contribution is too small
+- **Using it in your project?** I'd love to hear about your experience
+
+## Community Support
+
+This project can only get better with community involvement. If you find it useful:
+
+- ⭐ Star the repo to show support
+- 🧪 Try it out and provide feedback
+- 🐛 Report bugs or documentation issues
+- 🔀 Submit PRs for fixes or enhancements
+- 📣 Spread the word if you find it useful!
+
+Even just sharing your use case would be super helpful for guiding the project's direction.
+
+## Thank You!
+
+Thanks for checking out this early version of table-ai-filter! I hope it makes your data tables a little more magical. ✨
 
 ## License
 
-MIT © [Your Name](https://github.com/dashfuse)
+MIT © Open source with ❤️
