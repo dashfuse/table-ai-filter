@@ -1,0 +1,173 @@
+/* Base container */
+.ai-filter-container {
+    margin-bottom: 20px;
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+  
+  /* Input wrapper for layout */
+  .ai-filter-input-wrapper {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  /* Input field */
+  .ai-filter-input {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    background-color: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  .ai-filter-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    outline: none;
+  }
+  
+  .ai-filter-input:disabled {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+  }
+  
+  /* Button */
+  .ai-filter-button {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    background-color: #3b82f6;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .ai-filter-button:hover:not(:disabled) {
+    background-color: #2563eb;
+  }
+  
+  .ai-filter-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+  }
+  
+  .ai-filter-button:disabled {
+    background-color: #93c5fd;
+    cursor: not-allowed;
+  }
+  
+  /* Loading indicator */
+  .ai-filter-loading {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: ai-filter-spin 0.8s linear infinite;
+  }
+  
+  @keyframes ai-filter-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Error message */
+  .ai-filter-error-container {
+    margin-top: 8px;
+  }
+  
+  .ai-filter-error {
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #ef4444;
+    background-color: #fee2e2;
+    border: 1px solid #fecaca;
+    border-radius: 4px;
+  }
+  
+  /* Explanation */
+  .ai-filter-explanation-container {
+    margin-top: 8px;
+  }
+  
+  .ai-filter-explanation {
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #1f2937;
+    background-color: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    font-style: italic;
+  }
+  
+  /* CSS Variables for theming */
+  :root {
+    --ai-filter-primary-color: #3b82f6;
+    --ai-filter-primary-hover: #2563eb;
+    --ai-filter-focus-ring: rgba(59, 130, 246, 0.25);
+    --ai-filter-border-color: #d1d5db;
+    --ai-filter-bg-color: #fff;
+    --ai-filter-text-color: #1f2937;
+    --ai-filter-disabled-bg: #f3f4f6;
+    --ai-filter-error-color: #ef4444;
+    --ai-filter-error-bg: #fee2e2;
+    --ai-filter-explanation-bg: #f3f4f6;
+    --ai-filter-explanation-border: #e5e7eb;
+    --ai-filter-font-size: 14px;
+    --ai-filter-border-radius: 4px;
+  }
+  
+  /* Dark mode support (if enabled) */
+  @media (prefers-color-scheme: dark) {
+    .ai-filter-container.dark-mode {
+      --ai-filter-primary-color: #3b82f6;
+      --ai-filter-primary-hover: #4f46e5;
+      --ai-filter-focus-ring: rgba(59, 130, 246, 0.4);
+      --ai-filter-border-color: #4b5563;
+      --ai-filter-bg-color: #1f2937;
+      --ai-filter-text-color: #e5e7eb;
+      --ai-filter-disabled-bg: #374151;
+      --ai-filter-error-color: #f87171;
+      --ai-filter-error-bg: rgba(248, 113, 113, 0.2);
+      --ai-filter-explanation-bg: #374151;
+      --ai-filter-explanation-border: #4b5563;
+    }
+    
+    .ai-filter-container.dark-mode .ai-filter-input {
+      background-color: var(--ai-filter-bg-color);
+      color: var(--ai-filter-text-color);
+      border-color: var(--ai-filter-border-color);
+    }
+    
+    .ai-filter-container.dark-mode .ai-filter-button {
+      background-color: var(--ai-filter-primary-color);
+    }
+    
+    .ai-filter-container.dark-mode .ai-filter-button:hover:not(:disabled) {
+      background-color: var(--ai-filter-primary-hover);
+    }
+    
+    .ai-filter-container.dark-mode .ai-filter-explanation {
+      background-color: var(--ai-filter-explanation-bg);
+      border-color: var(--ai-filter-explanation-border);
+      color: var(--ai-filter-text-color);
+    }
+    
+    .ai-filter-container.dark-mode .ai-filter-error {
+      background-color: var(--ai-filter-error-bg);
+      color: var(--ai-filter-error-color);
+    }
+  }
