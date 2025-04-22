@@ -6,7 +6,7 @@ import {
   createColumnHelper,
   ColumnFiltersState
 } from '@tanstack/react-table';
-import { AIFilter } from '@dashfuse/table-ai-filter';
+import { AIFilter } from '@dashfuse/table-ai-filter/tanstack';
 import './styles.css'; // Your existing styles
 
 // Sample product data

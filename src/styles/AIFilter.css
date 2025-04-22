@@ -112,6 +112,13 @@
     border-radius: 4px;
     font-style: italic;
   }
+
+  .ai-filter-provider-badge {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 4px;
+    text-align: right;
+  }
   
   /* CSS Variables for theming */
   :root {

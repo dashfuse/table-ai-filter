@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import * as React from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { AIFilterComponentProps } from './types';
 import { useAIFilter } from './useAIFilter';
+import { LLMProviderOptions } from './llm/LLMProviderInterface';
 
 // Default CSS class names
 const defaultClasses = {
@@ -13,13 +15,24 @@ const defaultClasses = {
   errorMessage: 'ai-filter-error',
   explanationContainer: 'ai-filter-explanation-container',
   explanation: 'ai-filter-explanation',
+  providerBadge: 'ai-filter-provider-badge',
 };
+
+/**
+ * Enhanced component props with LLM provider settings
+ */
+export interface EnhancedAIFilterComponentProps extends AIFilterComponentProps {
+  // LLM Provider settings
+  llmProvider?: string;  // 'openai', 'claude', etc.
+  llmOptions?: LLMProviderOptions;
+  showProviderBadge?: boolean;
+}
 
 /**
  * Base AIFilterComponent that works with any table library
  * through the adapter pattern
  */
-export const AIFilterComponent: React.FC<AIFilterComponentProps> = ({
+export const AIFilterComponent: React.FC<EnhancedAIFilterComponentProps> = ({
   // Adapter
   adapter,
   
@@ -27,6 +40,11 @@ export const AIFilterComponent: React.FC<AIFilterComponentProps> = ({
   apiKey,
   endpoint,
   model,
+  
+  // LLM Provider settings
+  llmProvider = 'openai',
+  llmOptions = {},
+  showProviderBadge = false,
   
   // Custom parser
   parseQuery,
@@ -77,6 +95,8 @@ export const AIFilterComponent: React.FC<AIFilterComponentProps> = ({
     apiKey,
     endpoint,
     model,
+    llmProvider,
+    llmOptions,
     parseQuery,
     onError,
     onSuccess,
@@ -132,54 +152,102 @@ export const AIFilterComponent: React.FC<AIFilterComponentProps> = ({
     };
   }, []);
 
-  return (
-    <div className={`${mergedClasses.container} ${className}`}>
-      <form onSubmit={handleSubmit}>
-        <div className={mergedClasses.inputWrapper}>
-          <input
-            type="text"
-            value={query}
-            onChange={handleQueryChange}
-            onKeyDown={handleKeyDown}
-            placeholder={placeholder}
-            disabled={disabled || isProcessing}
-            className={mergedClasses.input}
-            aria-label={ariaLabel}
-          />
-          
-          <button 
-            type="submit" 
-            disabled={disabled || isProcessing || !query.trim()}
-            className={mergedClasses.button}
-            aria-label="Apply AI filter"
-          >
-            {isProcessing ? (
-              <>
-                <span className={mergedClasses.loadingIndicator}></span>
-                {loadingText}
-              </>
-            ) : buttonText}
-          </button>
-        </div>
-      </form>
+  // Use React.createElement instead of JSX
+  return React.createElement(
+    'div',
+    { className: `${mergedClasses.container} ${className}` },
+    [
+      // Form
+      React.createElement(
+        'form',
+        { 
+          onSubmit: handleSubmit,
+          key: 'form'
+        },
+        React.createElement(
+          'div',
+          { className: mergedClasses.inputWrapper },
+          [
+            // Input
+            React.createElement('input', {
+              type: 'text',
+              value: query,
+              onChange: handleQueryChange,
+              onKeyDown: handleKeyDown,
+              placeholder,
+              disabled: disabled || isProcessing,
+              className: mergedClasses.input,
+              'aria-label': ariaLabel,
+              key: 'input'
+            }),
+            
+            // Button
+            React.createElement(
+              'button',
+              {
+                type: 'submit',
+                disabled: disabled || isProcessing || !query.trim(),
+                className: mergedClasses.button,
+                'aria-label': 'Apply AI filter',
+                key: 'button'
+              },
+              isProcessing
+                ? [
+                    React.createElement('span', {
+                      className: mergedClasses.loadingIndicator,
+                      key: 'loading-indicator'
+                    }),
+                    loadingText
+                  ]
+                : buttonText
+            )
+          ]
+        )
+      ),
       
-      {/* Error message */}
-      {error && (
-        <div className={mergedClasses.errorContainer}>
-          <div className={mergedClasses.errorMessage} role="alert">
-            {error}
-          </div>
-        </div>
-      )}
+      // Provider badge
+      showProviderBadge && React.createElement(
+        'div',
+        {
+          className: mergedClasses.providerBadge,
+          key: 'provider-badge'
+        },
+        `Powered by ${llmProvider.charAt(0).toUpperCase()}${llmProvider.slice(1)}`
+      ),
       
-      {/* Explanation */}
-      {showExplanation && explanation && !error && (
-        <div className={mergedClasses.explanationContainer}>
-          <div className={mergedClasses.explanation} aria-live="polite">
-            {explanation}
-          </div>
-        </div>
-      )}
-    </div>
+      // Error message
+      error && React.createElement(
+        'div',
+        { 
+          className: mergedClasses.errorContainer,
+          key: 'error-container'
+        },
+        React.createElement(
+          'div',
+          {
+            className: mergedClasses.errorMessage,
+            role: 'alert'
+          },
+          error
+        )
+      ),
+      
+      // Explanation
+      showExplanation && explanation && !error && React.createElement(
+        'div',
+        { 
+          className: mergedClasses.explanationContainer,
+          key: 'explanation-container'
+        },
+        React.createElement(
+          'div',
+          {
+            className: mergedClasses.explanation,
+            'aria-live': 'polite'
+          },
+          explanation
+        )
+      )
+    ]
   );
 };

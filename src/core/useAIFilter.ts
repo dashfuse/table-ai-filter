@@ -5,7 +5,19 @@ import {
   ParseResult,
   TableAdapter,
 } from './types';
-import { parseNaturalLanguage, createGenericTextSearch } from './AIFilterParser';
+import { parseNaturalLanguage, createGenericTextSearch, EnhancedParseOptions } from './AIFilterParser';
+import { LLMProviderOptions } from './llm/LLMProviderInterface';
+
+/**
+ * Options for useAIFilter with LLM provider settings
+ */
+export interface EnhancedAIFilterOptions<TAdapter extends TableAdapter = TableAdapter> 
+  extends AIFilterOptions<TAdapter> {
+  
+  // LLM Provider settings
+  llmProvider?: string;  // 'openai', 'claude', etc.
+  llmOptions?: LLMProviderOptions;
+}
 
 /**
  * Base hook for AI filtering
@@ -16,11 +28,13 @@ export function useAIFilter<TAdapter extends TableAdapter = TableAdapter>({
   apiKey,
   endpoint,
   model,
+  llmProvider = 'openai',
+  llmOptions = {},
   parseQuery: customParseQuery,
   onError,
   onSuccess,
   enableGlobalFilterFallback = true,
-}: AIFilterOptions<TAdapter>): AIFilterResult {
+}: EnhancedAIFilterOptions<TAdapter>): AIFilterResult {
   const [query, setQuery] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -60,14 +74,19 @@ export function useAIFilter<TAdapter extends TableAdapter = TableAdapter>({
       if (customParseQuery) {
         result = await customParseQuery(queryToProcess, columnMetadata);
       } else {
-        result = await parseNaturalLanguage({
+        // Support both legacy and new options
+        const parseOptions: EnhancedParseOptions = {
           query: queryToProcess,
           columnMetadata,
           currentFilters,
           apiKey,
           endpoint,
-          model
-        });
+          model,
+          llmProvider,
+          llmOptions
+        };
+
+        result = await parseNaturalLanguage(parseOptions);
       }
       
       if (result.success) {
@@ -127,6 +146,8 @@ export function useAIFilter<TAdapter extends TableAdapter = TableAdapter>({
     apiKey,
     endpoint,
     model,
+    llmProvider,
+    llmOptions,
     customParseQuery,
     enableGlobalFilterFallback,
     onSuccess,
